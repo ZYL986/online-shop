@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}结算付款 - 在线购物网站{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">结算付款</h2>
+<div class="row gap-4">
+    <div class="col-md-6">
+        <div class="table-container">
+            <h5 class="mb-3">订单商品明细</h5>
+            <table class="table table-sm table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>商品名称</th>
+                        <th>购买数量</th>
+                        <th>商品单价</th>
+                        <th>商品小计</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>¥{{ "%.2f"|format(item.product.price) }}</td>
+                        <td>¥{{ "%.2f"|format(item.total_price) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">订单总金额：</td>
+                        <td class="text-danger fw-bold">¥{{ "%.2f"|format(total_amount) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="form-container">
+            <h5 class="mb-3">收货信息填写</h5>
+            <form method="POST" action="{{ url_for('customer.checkout') }}">
+                <div class="mb-3">
+                    <label for="recipient_name" class="form-label">收件人姓名</label>
+                    <input type="text" class="form-control" id="recipient_name" name="recipient_name" required placeholder="请输入收件人真实姓名">
+                </div>
+                <div class="mb-3">
+                    <label for="recipient_phone" class="form-label">收件人手机号</label>
+                    <input type="text" class="form-control" id="recipient_phone" name="recipient_phone" required placeholder="请输入11位有效手机号">
+                </div>
+                <div class="mb-3">
+                    <label for="recipient_address" class="form-label">收件人详细地址</label>
+                    <textarea class="form-control" id="recipient_address" name="recipient_address" rows="3" required placeholder="请输入省/市/区/街道/门牌号等详细地址"></textarea>
+                </div>
+                <div class="alert alert-info fs-6 mb-3">
+                    <i class="bi bi-info-circle"></i> 提示：本项目为实验模拟，无需输入真实支付信息，提交表单即完成订单创建与发货。
+                </div>
+                <button type="submit" class="btn btn-primary w-100">提交订单并完成付款</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

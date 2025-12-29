@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}编辑商品 - {{ product.name }} - 在线购物网站{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="text-center mb-4">编辑商品：{{ product.name }}</h2>
+    <!-- 图片上传需设置enctype="multipart/form-data" -->
+    <form method="POST" action="{{ url_for('admin.product_edit', product_id=product.id) }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">商品名称 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="name" name="name" required value="{{ product.name }}" placeholder="请输入商品名称（不超过128字）">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">商品描述</label>
+            <textarea class="form-control" id="description" name="description" rows="3" placeholder="请输入商品详细描述（可选）">{{ product.description or "" }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">商品价格 <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required value="{{ product.price }}" placeholder="请输入商品单价（保留2位小数）">
+        </div>
+        <div class="mb-3">
+            <label for="stock" class="form-label">商品库存 <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="stock" name="stock" min="0" required value="{{ product.stock }}" placeholder="请输入商品库存数量（非负整数）">
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">商品图片（可选更新）</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            <div class="form-text text-muted mt-1">支持JPG、PNG格式图片，建议尺寸300x200，大小不超过2MB</div>
+            <!-- 显示当前图片 -->
+            {% if product.image_filename %}
+            <div class="mt-2">
+                <p class="mb-1">当前商品图片：</p>
+                <img src="{{ url_for('static', filename='images/' + product.image_filename) }}" alt="{{ product.name }}" width="100" height="100" style="object-fit: cover; border-radius: 4px;">
+            </div>
+            {% endif %}
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4">
+            <button type="submit" class="btn btn-primary">保存修改</button>
+            <a href="{{ url_for('admin.product_list') }}" class="btn btn-outline-secondary">返回商品列表</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

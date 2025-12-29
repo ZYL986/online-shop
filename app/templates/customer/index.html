@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 商品列表 - 在线购物网站{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">商品列表</h2>
+<div class="row">
+    <!-- 商品循环：Jinja2 for循环正确，变量关联product -->
+    {% for product in products %}
+    <div class="col-md-4 col-sm-6">
+        <div class="card product-card">
+            <!-- 商品图片：Jinja2条件判断+url_for正确关联静态文件 -->
+            {% if product.image_filename %}
+            <img src="{{ url_for('static', filename='images/' + product.image_filename) }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=商品图片+暂无" class="card-img-top" alt="{{ product.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <!-- 价格格式化：Jinja2 format过滤器，保留2位小数 -->
+                <p class="card-text text-danger fw-bold">¥{{ "%.2f"|format(product.price) }}</p>
+                <p class="card-text text-truncate">{{ product.description or "暂无商品描述" }}</p>
+                <p class="card-text text-muted">库存：{{ product.stock }} 件</p>
+                <!-- 已登录普通顾客：显示加入购物车按钮 -->
+                {% if current_user.is_authenticated and not current_user.is_admin %}
+                <form method="POST" action="{{ url_for('customer.cart_add', product_id=product.id) }}">
+                    <button type="submit" class="btn btn-primary w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+                        {% if product.stock <= 0 %}
+                        <span class="text-white-50">库存不足，无法添加</span>
+                        {% else %}
+                        加入购物车
+                        {% endif %}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- 无商品时提示：Jinja2 else分支正确 -->
+    <div class="col-12">
+        <div class="alert alert-info text-center">暂无商品可供展示，敬请期待！</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

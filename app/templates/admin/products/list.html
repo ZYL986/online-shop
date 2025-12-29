@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}商品管理 - 在线购物网站{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>商品管理</h2>
+    <a href="{{ url_for('admin.product_add') }}" class="btn btn-primary">添加新商品</a>
+</div>
+
+{% if products %}
+<div class="table-container">
+    <table class="table table-hover table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>商品图片</th>
+                <th>商品名称</th>
+                <th>商品价格</th>
+                <th>商品库存</th>
+                <th>最后更新时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    {% if product.image_filename %}
+                    <img src="{{ url_for('static', filename='images/' + product.image_filename) }}" alt="{{ product.name }}" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
+                    {% else %}
+                    <img src="https://via.placeholder.com/50x50?text=暂无" alt="{{ product.name }}" width="50" height="50" style="border-radius: 4px;">
+                    {% endif %}
+                </td>
+                <td>{{ product.name }}</td>
+                <td>¥{{ "%.2f"|format(product.price) }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td class="d-flex gap-2">
+                    <a href="{{ url_for('admin.product_edit', product_id=product.id) }}" class="btn btn-sm btn-outline-primary">编辑</a>
+                    <a href="{{ url_for('admin.product_delete', product_id=product.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定要删除该商品吗？删除后将同步删除相关购物车与订单记录，无法恢复！')">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info text-center">
+    暂无商品可供管理，<a href="{{ url_for('admin.product_add') }}">点击添加第一个商品</a>
+</div>
+{% endif %}
+{% endblock %}

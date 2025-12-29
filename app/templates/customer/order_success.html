@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}订单提交成功 - 在线购物网站{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h2 class="text-success mb-4">✅ 订单提交成功，已完成发货！</h2>
+    <div class="card w-50 mx-auto shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title border-bottom pb-3">订单详情</h5>
+            <p class="card-text"><strong>订单编号：</strong>{{ order.order_no }}</p>
+            <p class="card-text"><strong>订单金额：</strong>¥{{ "%.2f"|format(order.total_amount) }}</p>
+            <p class="card-text"><strong>收件人：</strong>{{ order.recipient_name }}</p>
+            <p class="card-text"><strong>联系电话：</strong>{{ order.recipient_phone }}</p>
+            <p class="card-text"><strong>收货地址：</strong>{{ order.recipient_address }}</p>
+            <p class="card-text"><strong>订单状态：</strong>
+                {% if order.status == 'shipped' %}
+                <span class="badge bg-primary">已发货</span>
+                {% elif order.status == 'completed' %}
+                <span class="badge bg-success">已完成</span>
+                {% elif order.status == 'pending' %}
+                <span class="badge bg-warning">待付款</span>
+                {% else %}
+                <span class="badge bg-danger">已取消</span>
+                {% endif %}
+            </p>
+            <p class="card-text text-muted mt-3">发货确认邮件已发送至您的注册邮箱，请查收！</p>
+            <div class="d-flex gap-2 justify-content-center mt-4">
+                <a href="{{ url_for('customer.orders') }}" class="btn btn-primary">查看我的订单</a>
+                <a href="{{ url_for('customer.index') }}" class="btn btn-outline-secondary">返回首页</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

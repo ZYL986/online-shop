@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}管理员仪表盘 - 在线购物网站{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">管理员仪表盘</h2>
+
+<!-- 统计卡片 -->
+<div class="row gap-4 mb-5">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">商品总数</h5>
+                <h2 class="display-4">{{ product_count }}</h2>
+            </div>
+            <div class="card-footer bg-primary bg-opacity-80 d-flex align-items-center justify-content-between">
+                <a href="{{ url_for('admin.product_list') }}" class="text-white text-decoration-none">查看商品管理</a>
+                <i class="bi bi-box-seam"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">订单总数</h5>
+                <h2 class="display-4">{{ order_count }}</h2>
+            </div>
+            <div class="card-footer bg-success bg-opacity-80 d-flex align-items-center justify-content-between">
+                <a href="{{ url_for('admin.order_list') }}" class="text-white text-decoration-none">查看订单管理</a>
+                <i class="bi bi-receipt"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-danger text-white h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">总销售额</h5>
+                <h2 class="display-4">¥{{ "%.2f"|format(total_sales or 0.0) }}</h2>
+            </div>
+            <div class="card-footer bg-danger bg-opacity-80 d-flex align-items-center justify-content-between">
+                <a href="{{ url_for('admin.sales_report') }}" class="text-white text-decoration-none">查看销售统计</a>
+                <i class="bi bi-currency-yen"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 管理菜单 + 欢迎信息 -->
+<div class="row gap-4">
+    <div class="col-md-3">
+        <div class="admin-sidebar">
+            <h5>管理菜单</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="{{ url_for('admin.product_list') }}" class="text-decoration-none">商品管理（增删改查）</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="{{ url_for('admin.order_list') }}" class="text-decoration-none">订单管理（修改状态）</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="{{ url_for('admin.sales_report') }}" class="text-decoration-none">销售统计（报表查询）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="admin-content shadow-sm border rounded-3 bg-white p-4">
+            <h5 class="mb-3">欢迎使用管理员后台</h5>
+            <p class="text-muted">您好，管理员 {{ current_user.username }}，您可以通过左侧管理菜单完成以下操作：</p>
+            <ul class="list-group list-group-flush mt-3">
+                <li class="list-group-item">添加、编辑、删除商品，维护商品库存与价格</li>
+                <li class="list-group-item">查看所有用户订单，更新订单状态（待付款/已发货/已完成/已取消）</li>
+                <li class="list-group-item">查看不同时间范围的销售统计报表，了解热销商品</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

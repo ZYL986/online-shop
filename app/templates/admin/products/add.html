@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}添加新商品 - 在线购物网站{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="text-center mb-4">添加新商品</h2>
+    <!-- 图片上传需设置enctype="multipart/form-data" -->
+    <form method="POST" action="{{ url_for('admin.product_add') }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">商品名称 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="name" name="name" required placeholder="请输入商品名称（不超过128字）">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">商品描述</label>
+            <textarea class="form-control" id="description" name="description" rows="3" placeholder="请输入商品详细描述（可选）"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">商品价格 <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required placeholder="请输入商品单价（保留2位小数）">
+        </div>
+        <div class="mb-3">
+            <label for="stock" class="form-label">商品库存 <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="stock" name="stock" min="0" required placeholder="请输入商品库存数量（非负整数）">
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">商品图片</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*" placeholder="请选择商品图片（支持jpg/png格式）">
+            <div class="form-text text-muted mt-1">支持JPG、PNG格式图片，建议尺寸300x200，大小不超过2MB</div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4">
+            <button type="submit" class="btn btn-success">提交添加</button>
+            <a href="{{ url_for('admin.product_list') }}" class="btn btn-outline-secondary">返回商品列表</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

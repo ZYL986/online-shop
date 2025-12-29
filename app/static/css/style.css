@@ -1,0 +1,143 @@
+/* 自定义样式补充，基于Bootstrap 5扩展，适配所有页面 */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+/* 页脚样式（固定在页面底部，内容不足时不悬浮） */
+.footer {
+    margin-top: auto;
+    padding: 1.5rem 0;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    margin-top: 50px;
+}
+
+.footer p {
+    margin: 0;
+    color: #6c757d;
+}
+
+/* 商品卡片样式（适配首页，hover效果优化） */
+.product-card {
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    border: none;
+    border-radius: 8px;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+.product-card img {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.product-card .card-body {
+    padding: 1.25rem;
+}
+
+.product-card .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.product-card .card-text {
+    margin-bottom: 0.5rem;
+}
+
+/* 表格容器样式（购物车、订单、商品管理页面通用） */
+.table-container {
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+}
+
+/* 表单容器样式（注册、登录、添加商品等页面通用） */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 30px;
+    border: 1px solid #e9ecef;
+}
+
+/* 管理员页面专属样式 */
+.admin-sidebar {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    height: 100%;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.admin-content {
+    padding: 1.5rem;
+}
+
+.admin-sidebar h5 {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.admin-sidebar .list-group-item {
+    border: none;
+    padding: 0.75rem 1rem;
+    color: #212529;
+    transition: background-color 0.2s ease;
+}
+
+.admin-sidebar .list-group-item:hover {
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+
+/* 徽章样式优化（订单状态、统计标签） */
+.badge {
+    font-size: 0.8rem;
+    padding: 0.5em 0.75em;
+}
+
+/* 按钮样式补充（适配各种场景） */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* 响应式适配（手机端优化） */
+@media (max-width: 768px) {
+    .product-card img {
+        height: 150px;
+    }
+
+    .table-container {
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 1.5rem;
+        margin-top: 20px;
+    }
+
+    .admin-sidebar {
+        margin-bottom: 20px;
+    }
+}
