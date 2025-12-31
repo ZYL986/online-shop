@@ -4,10 +4,10 @@
 - 学号：202330452351
 - 姓名：张钰麟
 - 项目完成时间：2025-12-29
-- 项目部署地址：https://xxx.aliyun.com（阿里云ECS）
+- 项目部署地址：http://139.9.215.106/（华为云Flexus应用服务器L实例）
 - 测试账户（已创建）：
-  - 顾客账户：username=admin, password=123456
-  - 管理员账户：username=zyl, password=789789asd
+  - 顾客账户：username=admin/3569664879, password=1175345276
+  - 管理员账户：zyl/1175345276@qq.com, password=789789asd
 
 ## 项目介绍
 本项目是基于Python Flask框架开发的简单在线购物网站，满足实验要求的顾客端和销售管理端全部功能，数据库采用MySQL，支持在线部署到阿里云ECS。
@@ -16,9 +16,9 @@
 - 后端：Python 3.8+、Flask 2.3.3、SQLAlchemy 3.1.1
 - 前端：HTML5、CSS3、Bootstrap 5
 - 数据库：MySQL 8.0
-- 部署：Gunicorn、Nginx、Supervisor
+- 部署：Gunicorn、Nginx
 
-## 本地代码运行步骤
+## 本地部署
 
 ### 步骤 1：环境准备
 1. **安装 Python 3.8+**
@@ -143,5 +143,5 @@
    - 命令行中按下 `Ctrl+C`，即可停止项目运行
    - 退出虚拟环境：`deactivate`
 
-## 部署网址
-打开浏览器直接访问：[https://xxx.aliyun.com](https://xxx.aliyun.com)
+## 在线部署
+打开浏览器直接访问：[http://139.9.215.106/]
