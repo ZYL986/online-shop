@@ -6,7 +6,7 @@
 - 项目完成时间：2025-12-29
 - 项目部署地址：http://139.9.215.106/（华为云Flexus应用服务器L实例）
 - 测试账户（已创建）：
-  - 顾客账户：username=admin/3569664879, password=1175345276
+  - 顾客账户：username=admin/3569664879@qq.com, password=1175345276
   - 管理员账户：zyl/1175345276@qq.com, password=789789asd
 
 ## 项目介绍
