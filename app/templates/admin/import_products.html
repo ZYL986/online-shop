@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+{% block title %}导入商品{% endblock %}
+{% block content %}
+<h3>批量导入商品（CSV）</h3>
+<div class="form-container">
+  <p class="text-muted small">CSV格式：name,price,stock,category,description</p>
+  <form method="POST" enctype="multipart/form-data">
+    <div class="mb-3"><label class="form-label">选择CSV文件</label><input type="file" name="file" class="form-control" accept=".csv" required></div>
+    <button type="submit" class="btn btn-primary">开始导入</button>
+  </form>
+</div>
+{% endblock %}

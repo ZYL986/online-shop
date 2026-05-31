@@ -1,0 +1,201 @@
+﻿{% extends "base.html" %}
+{% block title %}数据分析仪表板 - 在线商城{% endblock %}
+{% block content %}
+<h2 class="mb-2">数据分析仪表板</h2>
+<p class="text-muted mb-4">实时销售数据与用户行为分析</p>
+
+<div class="row g-3 mb-4" id="summary-cards">
+  <div class="col-6 col-md-3"><div class="card bg-primary text-white"><div class="card-body p-3"><small>累计销售额</small><h4 class="mb-0" id="s-total-sales">--</h4></div></div></div>
+  <div class="col-6 col-md-3"><div class="card bg-success text-white"><div class="card-body p-3"><small>累计订单数</small><h4 class="mb-0" id="s-total-orders">--</h4></div></div></div>
+  <div class="col-6 col-md-3"><div class="card bg-info text-white"><div class="card-body p-3"><small>商品总数</small><h4 class="mb-0" id="s-total-products">--</h4></div></div></div>
+  <div class="col-6 col-md-3"><div class="card bg-warning text-white"><div class="card-body p-3"><small>今日销售额</small><h4 class="mb-0" id="s-today-sales">--</h4></div></div></div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-8">
+    <div class="card"><div class="card-header d-flex justify-content-between align-items-center">
+      <span>销售趋势</span>
+      <select id="trend-period" class="form-select form-select-sm w-auto"><option value="daily">按日</option><option value="weekly">按周</option><option value="monthly">按月</option></select>
+    </div><div class="card-body"><div id="chart-sales-trend" style="height:350px"></div></div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card"><div class="card-header">分类销售分布</div><div class="card-body"><div id="chart-category" style="height:350px"></div></div></div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">商品销量排行</div><div class="card-body"><div id="chart-ranking" style="height:350px"></div></div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">浏览流量趋势</div><div class="card-body"><div id="chart-browse" style="height:350px"></div></div></div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">用户地域分布</div><div class="card-body"><div id="chart-region" style="height:300px"></div></div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">用户购买力分布</div><div class="card-body"><div id="chart-power" style="height:300px"></div></div></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">销售异常检测</div>
+  <div class="card-body"><div id="chart-anomaly" style="height:300px"></div></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script>
+const echartsInstances = {};
+
+function initChart(id) {
+  const dom = document.getElementById(id);
+  if (!dom) return null;
+  if (echartsInstances[id]) echartsInstances[id].dispose();
+  const chart = echarts.init(dom);
+  echartsInstances[id] = chart;
+  window.addEventListener("resize", () => chart.resize());
+  return chart;
+}
+
+function showDefault(chart) {
+  chart.setOption({
+    title: { text: "加载中...", left: "center", top: "center", textStyle: { color: "#999", fontSize: 14 } },
+    xAxis: { show: false }, yAxis: { show: false }, series: []
+  });
+}
+
+fetch("/analytics/data/dashboard_summary").then(r=>r.json()).then(d=>{
+  document.getElementById("s-total-sales").textContent = "\u00A5" + d.total_sales.toLocaleString();
+  document.getElementById("s-total-orders").textContent = d.total_orders;
+  document.getElementById("s-total-products").textContent = d.total_products;
+  document.getElementById("s-today-sales").textContent = "\u00A5" + d.today_sales.toLocaleString();
+});
+
+function loadTrend(period) {
+  const chart = initChart("chart-sales-trend");
+  if (!chart) return;
+  showDefault(chart);
+  fetch("/analytics/data/sales_trend?period=" + period + "&days=30").then(r=>r.json()).then(d=>{
+    chart.setOption({
+      tooltip: { trigger: "axis" },
+      legend: { data: ["销售额", "订单数"] },
+      xAxis: { type: "category", data: d.dates, axisLabel: { rotate: 30 } },
+      yAxis: [{ type: "value", name: "金额 (\u00A5)" }, { type: "value", name: "订单数" }],
+      series: [
+        { name: "销售额", type: "bar", data: d.amounts, itemStyle: { color: "#5470c6" } },
+        { name: "订单数", type: "line", yAxisIndex: 1, data: d.counts, itemStyle: { color: "#91cc75" } }
+      ],
+      grid: { left: 60, right: 60, top: 40, bottom: 50 }
+    });
+  });
+}
+loadTrend("daily");
+document.getElementById("trend-period").addEventListener("change", function(){ loadTrend(this.value); });
+
+(function(){
+  const chart = initChart("chart-category");
+  if (!chart) return;
+  showDefault(chart);
+  fetch("/analytics/data/category_distribution?days=30").then(r=>r.json()).then(d=>{
+    chart.setOption({
+      tooltip: { trigger: "item" },
+      series: [{ type: "pie", radius: ["45%", "70%"], center: ["50%", "50%"],
+        data: d.names.map((n,i) => ({ name: n, value: d.sales[i] })),
+        label: { formatter: "{b}\n{d}%" }
+      }]
+    });
+  });
+})();
+
+(function(){
+  const chart = initChart("chart-ranking");
+  if (!chart) return;
+  showDefault(chart);
+  fetch("/analytics/data/sales_ranking?days=30&limit=10").then(r=>r.json()).then(d=>{
+    chart.setOption({
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      xAxis: { type: "value", name: "销量" },
+      yAxis: { type: "category", data: d.names.reverse(), axisLabel: { width: 100, overflow: "truncate" } },
+      series: [{ type: "bar", data: d.quantities.reverse(), itemStyle: { color: "#fc8452" } }],
+      grid: { left: 120, right: 30, top: 10, bottom: 20 }
+    });
+  });
+})();
+
+(function(){
+  const chart = initChart("chart-browse");
+  if (!chart) return;
+  showDefault(chart);
+  fetch("/analytics/data/browse_stats?days=30").then(r=>r.json()).then(d=>{
+    chart.setOption({
+      tooltip: { trigger: "axis" },
+      xAxis: { type: "category", data: d.daily_dates, axisLabel: { rotate: 30 } },
+      yAxis: { type: "value", name: "浏览量" },
+      series: [{ type: "line", data: d.daily_counts, smooth: true, areaStyle: { opacity: 0.3 }, itemStyle: { color: "#ee6666" } }],
+      grid: { left: 60, right: 20, top: 20, bottom: 50 }
+    });
+  });
+})();
+
+(function(){
+  const chart = initChart("chart-region");
+  if (!chart) return;
+  showDefault(chart);
+  fetch("/analytics/data/user_region").then(r=>r.json()).then(d=>{
+    chart.setOption({
+      tooltip: { trigger: "item" },
+      series: [{ type: "pie", radius: "65%", center: ["50%", "55%"],
+        data: d.regions.map((r,i) => ({ name: r, value: d.counts[i] })),
+        label: { formatter: "{b}: {c}" }
+      }]
+    });
+  });
+})();
+
+(function(){
+  const chart = initChart("chart-power");
+  if (!chart) return;
+  showDefault(chart);
+  fetch("/analytics/data/purchasing_power").then(r=>r.json()).then(d=>{
+    chart.setOption({
+      tooltip: { trigger: "axis" },
+      xAxis: { type: "category", data: d.categories },
+      yAxis: { type: "value", name: "用户数" },
+      series: [{ type: "bar", data: d.counts, itemStyle: { color: "#73c0de" } }],
+      grid: { left: 50, right: 20, top: 20, bottom: 30 }
+    });
+  });
+})();
+
+(function(){
+  const chart = initChart("chart-anomaly");
+  if (!chart) return;
+  showDefault(chart);
+  fetch("/analytics/data/anomaly_check?days=30").then(r=>r.json()).then(d=>{
+    const dates = d.anomalies.map(a => a.date);
+    const amounts = d.anomalies.map(a => a.amount);
+    const meanLine = new Array(dates.length).fill(d.mean);
+    const upperLine = new Array(dates.length).fill(d.mean + d.std * 2);
+    const lowerLine = new Array(dates.length).fill(Math.max(0, d.mean - d.std * 2));
+
+    chart.setOption({
+      tooltip: { trigger: "axis" },
+      xAxis: { type: "category", data: dates, axisLabel: { rotate: 30 } },
+      yAxis: { type: "value", name: "日销售额 (\u00A5)" },
+      series: [
+        { name: "日销售额", type: "bar", data: amounts, itemStyle: { color: "#5470c6" } },
+        { name: "均值", type: "line", data: meanLine, lineStyle: { type: "dashed", color: "#91cc75" }, symbol: "none" },
+        { name: "上界", type: "line", data: upperLine, lineStyle: { type: "dashed", color: "#ee6666" }, symbol: "none" },
+        { name: "下界", type: "line", data: lowerLine, lineStyle: { type: "dashed", color: "#ee6666" }, symbol: "none" }
+      ],
+      grid: { left: 60, right: 30, top: 20, bottom: 50 }
+    });
+  });
+})();
+</script>
+{% endblock %}

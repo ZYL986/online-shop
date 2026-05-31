@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block title %}用户管理{% endblock %}
+{% block content %}
+<h3>用户管理</h3>
+<table class="table table-striped align-middle">
+  <thead><tr><th>ID</th><th>用户名</th><th>邮箱</th><th>角色</th><th>地区</th><th>注册时间</th><th>操作</th></tr></thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td>
+      <td><span class="badge bg-{{ 'danger' if u.is_admin else 'warning' if u.is_sales else 'secondary' }}">{{ {'admin':'管理员','sales':'销售人员','customer':'用户'}.get(u.role, u.role) }}</span></td>
+      <td>{{ u.region or "" }}</td>
+      <td>{{ u.created_at.strftime("%Y-%m-%d") }}</td>
+      <td>
+        {% if not u.is_admin %}
+        <a href="{{ url_for('admin.user_toggle_sales', user_id=u.id) }}" class="btn btn-sm btn-outline-{{ 'warning' if u.is_sales else 'success' }}">{{ '取消销售' if u.is_sales else '设为销售' }}</a>
+        <form method="POST" action="{{ url_for('admin.user_reset_password', user_id=u.id) }}" style="display:inline" onsubmit="return confirm('确定重置 {{ u.username }} 的密码为 123456 吗？')">
+          <button class="btn btn-sm btn-outline-secondary">重置密码</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

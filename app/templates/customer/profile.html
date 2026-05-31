@@ -1,0 +1,48 @@
+﻿{% extends "base.html" %}
+{% block title %}个人中心{% endblock %}
+{% block content %}
+<h3 class="mb-4">个人中心</h3>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body text-center">
+        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;font-size:32px">
+          {{ user.username[0].upper() }}
+        </div>
+        <h5>{{ user.username }}</h5>
+        <p class="text-muted small">{{ user.email }}</p>
+        <span class="badge bg-info">{{ {'admin':'管理员','sales':'销售人员','customer':'用户'}.get(user.role, user.role) }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-header">账户信息</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tr><td class="text-muted">用户名</td><td>{{ user.username }}</td></tr>
+          <tr><td class="text-muted">邮箱</td><td>{{ user.email }}</td></tr>
+          <tr><td class="text-muted">地区</td><td>{{ user.region or "未设置" }}</td></tr>
+          <tr><td class="text-muted">注册时间</td><td>{{ user.created_at.strftime("%Y-%m-%d") }}</td></tr>
+        </table>
+      </div>
+    </div>
+    {% if profile %}
+    <div class="card">
+      <div class="card-header">消费画像</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tr><td class="text-muted">累计订单</td><td>{{ profile.total_orders }}</td></tr>
+          <tr><td class="text-muted">累计消费</td><td class="text-danger fw-bold">&yen;{{ "%.2f"|format(profile.total_spent) }}</td></tr>
+          <tr><td class="text-muted">平均客单价</td><td>&yen;{{ "%.2f"|format(profile.avg_order_value) }}</td></tr>
+          <tr><td class="text-muted">偏好分类</td><td>{{ profile.favorite_category_name or "暂无" }}</td></tr>
+          <tr><td class="text-muted">购买力</td><td><span class="badge bg-{{ 'success' if profile.purchasing_power=='high' else 'warning' if profile.purchasing_power=='medium' else 'secondary' }}">{{ {'high':'高','medium':'中','low':'低'}.get(profile.purchasing_power, profile.purchasing_power) }}</span></td></tr>
+          <tr><td class="text-muted">浏览次数</td><td>{{ profile.browse_count }}</td></tr>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

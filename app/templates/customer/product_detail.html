@@ -1,0 +1,56 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ product.name }} - 商品详情{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('customer.index') }}">首页</a></li>
+    <li class="breadcrumb-item active">{{ product.name }}</li>
+  </ol>
+</nav>
+<div class="row g-4">
+  <div class="col-md-5">
+    {% if product.image_filename %}
+    <img src="{{ url_for('static', filename='images/' + product.image_filename) }}" class="img-fluid rounded" alt="{{ product.name }}">
+    {% else %}
+    <img src="https://via.placeholder.com/500x400?text=暂无图片" class="img-fluid rounded" alt="{{ product.name }}">
+    {% endif %}
+  </div>
+  <div class="col-md-7">
+    <h3>{{ product.name }}</h3>
+    {% if product.category %}<span class="badge bg-secondary mb-2">{{ product.category.name }}</span>{% endif %}
+    <h4 class="text-danger fw-bold mt-2">&yen;{{ "%.2f"|format(product.price) }}</h4>
+    <p class="text-muted">库存: {{ product.stock }} | 浏览量: {{ product.view_count or 0 }}</p>
+    <p>{{ product.description or "暂无商品描述" }}</p>
+    {% if current_user.is_authenticated and current_user.role == 'customer' %}
+    <form method="POST" action="{{ url_for('customer.cart_add', product_id=product.id) }}">
+      <button type="submit" class="btn btn-primary btn-lg" {% if product.stock <= 0 %}disabled{% endif %}>
+        {% if product.stock <= 0 %}库存不足{% else %}加入购物车{% endif %}
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+{% if also_bought %}
+<div class="mt-5">
+  <h5 class="mb-3">浏览过此商品的用户也购买了</h5>
+  <div class="row g-3">
+    {% for p in also_bought %}
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="card product-card h-100" onclick="location.href='{{ url_for('customer.product_detail', product_id=p.id) }}'" style="cursor:pointer">
+        {% if p.image_filename %}
+        <img src="{{ url_for('static', filename='images/' + p.image_filename) }}" class="card-img-top" alt="{{ p.name }}">
+        {% else %}
+        <img src="https://via.placeholder.com/200x150?text=暂无图片" class="card-img-top" alt="{{ p.name }}">
+        {% endif %}
+        <div class="card-body p-2">
+          <small class="text-truncate d-block">{{ p.name }}</small>
+          <small class="text-danger fw-bold">&yen;{{ "%.2f"|format(p.price) }}</small>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

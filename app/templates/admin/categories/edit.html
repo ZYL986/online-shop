@@ -1,0 +1,13 @@
+﻿{% extends "base.html" %}
+{% block title %}编辑分类{% endblock %}
+{% block content %}
+<h3>编辑分类</h3>
+<div class="form-container">
+<form method="POST">
+  <div class="mb-3"><label class="form-label">分类名称</label><input type="text" name="name" class="form-control" value="{{ category.name }}" required></div>
+  <div class="mb-3"><label class="form-label">描述</label><textarea name="description" class="form-control" rows="3">{{ category.description or "" }}</textarea></div>
+  <button type="submit" class="btn btn-primary">更新</button>
+  <a href="{{ url_for('admin.category_list') }}" class="btn btn-secondary">取消</a>
+</form>
+</div>
+{% endblock %}

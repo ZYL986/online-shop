@@ -1,147 +1,197 @@
-# 简单在线购物网站（实验项目）
+﻿# 在线购物商城
 
-## 基本信息
-- 学号：202330452351
-- 姓名：张钰麟
-- 项目完成时间：2025-12-29
-- 项目部署地址：http://139.9.215.106/（华为云Flexus应用服务器L实例）
-- 测试账户（已创建）：
-  - 顾客账户：username=admin/3569664879@qq.com, password=1175345276
-  - 管理员账户：zyl/1175345276@qq.com, password=789789asd
+基于 Python Flask 的电子商务网站，支持用户注册登录、商品浏览搜索、购物车、下单付款、邮件确认，以及销售人员商品管理、管理员数据监控等完整功能。集成协同过滤推荐系统、用户画像分析、反爬虫保护和大数据可视化看板。
 
-## 项目介绍
-本项目是基于Python Flask框架开发的简单在线购物网站，满足实验要求的顾客端和销售管理端全部功能，数据库采用MySQL，支持在线部署到阿里云ECS。
+## 在线地址
+
+> **http://8.141.97.133/**（阿里云 ECS）
+
+## 测试账号
+
+| 角色 | 用户名 | 密码 |
+|------|--------|------|
+| 管理员 | admin | admin123 |
+| 销售人员 | sales01 | sales123 |
+| 顾客 | user01 | user123 |
+| 顾客 | user02 | user123 |
+
+## 功能概览
+
+### 顾客端
+- 商品浏览（首页列表、分类筛选、关键词搜索）
+- 商品详情（浏览记录追踪、关联推荐）
+- 购物车（添加、修改数量、删除）
+- 下单结算（填写收货信息、付款确认）
+- 订单历史与状态查看
+- 邮件发货确认
+- 个性化推荐（"猜你喜欢"——协同过滤 + 浏览行为推荐）
+- 用户画像（地域、购买力、偏好分类）
+
+### 销售人员端
+- 商品管理（添加、编辑、删除、CSV 导入）
+- 商品分类管理（添加、删除类别）
+- 订单管理与状态更新
+- 销售报表（按类别、状态、库存统计）
+- 浏览/购买日志查看
+- 数据可视化（ECharts 图表）
+- 库存监控
+
+### 管理员端
+- 销售人员账号管理（添加、删除、密码重置）
+- 操作日志、登录日志查看
+- 销售业绩查询与监控
+- 反爬虫统计与 IP 管理
+- 数据可视化大屏（销售趋势、排行榜、分类分布、异常检测）
+- 数据导出（CSV）
+
+### 数据分析与推荐
+- 用户画像（购买力评估、偏好分类、活跃度）
+- 销售趋势预测（日/周/月）
+- 销售异常实时判别
+- 商品销售排行榜
+- 协同过滤推荐系统
+- "浏览过此商品的人也买了" 关联推荐
+- 基于浏览行为的个性化推荐
+
+### 安全与运维
+- 反爬虫侦测与应对（频率限制、UA 检测、IP 黑名单）
+- 浏览行为、登录日志、操作日志全程追踪
+- 移动端适配（Bootstrap 5 响应式）
 
 ## 技术栈
-- 后端：Python 3.8+、Flask 2.3.3、SQLAlchemy 3.1.1
-- 前端：HTML5、CSS3、Bootstrap 5
-- 数据库：MySQL 8.0
-- 部署：Gunicorn、Nginx
+
+| 层面 | 技术 |
+|------|------|
+| 后端框架 | Python 3.10, Flask 2.3 |
+| ORM | SQLAlchemy 2.0, Flask-SQLAlchemy |
+| 认证 | Flask-Login |
+| 数据库 | MySQL 8.0 |
+| 前端 | Bootstrap 5, ECharts 5 |
+| 邮件 | Flask-Mail (QQ SMTP) |
+| WSGI | Gunicorn |
+| 反向代理 | Nginx |
+| 可视化 | ECharts, D3.js |
 
 ## 本地部署
 
-### 步骤 1：环境准备
-1. **安装 Python 3.8+**
-   - 下载地址：https://www.python.org/downloads/
-   - 安装时勾选「Add Python to PATH」（Windows）
-   - Linux/Mac 一般自带 Python 3，需确保版本≥3.8
+### 1. 克隆项目
 
-2. **安装 MySQL 8.0**
-   - 下载地址：https://dev.mysql.com/downloads/mysql/
-   - 安装步骤：
-     - Windows：下一步安装，设置 root 密码（建议 123456，方便测试），记住端口 3306
-     - 将 MySQL 的可执行文件路径加入系统环境变量：`D:\MySQL\bin`（需根据实际安装路径调整）
-   - 验证 MySQL：登录 `mysql -u root -p`，输入密码能成功进入即安装完成
+```bash
+git clone git@github.com:ZYL986/online-shop.git
+cd online-shop
+```
 
-### 步骤 2：项目初始化
-1. **创建项目目录**
-   - 按照提供源代码创建文件夹和文件
+### 2. 创建虚拟环境
 
-2. **创建虚拟环境（隔离项目依赖）**
-   - 以管理员身份打开 PowerShell
-   - 右键点击"开始菜单"，选择"Windows PowerShell (管理员)"（或"终端 (管理员)"）
-   - 修改 PowerShell 执行策略，在管理员 PowerShell 中执行命令：
-     ```powershell
-     Set-ExecutionPolicy RemoteSigned
-     ```
-   - 出现确认提示时，输入 `Y` 并回车
-   - 打开命令行，进入项目根目录 `online-shop`
-   - 执行创建命令：`python -m venv venv`
-   - 激活虚拟环境：
-     - Windows：`venv\Scripts\activate`（命令行前缀出现 `(venv)` 即激活成功）
+```bash
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# Linux / Mac
+source venv/bin/activate
+```
 
-3. **安装项目依赖**
-   - 执行命令：`pip install -r requirements.txt`
-   - 等待依赖包安装完成，无报错即成功
+### 3. 安装依赖
 
-### 步骤 3：MySQL 数据库配置
-1. **创建数据库**
-   - 启动 MySQL 服务：
-     - 方式1（图形界面）：按下 `Win+R` → 输入 `services.msc` → 找到"MySQL80"（或对应版本的服务名）→ 右键选择"启动"
-   - 登录 MySQL：`mysql -u root -p`，输入 root 密码
-   - 执行创建数据库命令：
-     ```sql
-     CREATE DATABASE online_shopping CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-     ```
-   - 退出 MySQL：`exit`
+```bash
+pip install -r requirements.txt
+```
 
-2. **修改项目数据库配置**
-   - 打开 `app/config.py` 文件
-   - 修改 `SQLALCHEMY_DATABASE_URI` 中的用户名和密码，确保与你的 MySQL 配置一致：
-     ```python
-     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:789789asd@localhost:3306/online_shopping'
-     ```
+### 4. 配置 MySQL
 
-3. **配置邮件发送（可选，测试邮件功能）**
-   - 以 QQ 邮箱为例，开启 SMTP 服务：
-     - 登录 QQ 邮箱 → 设置 → 账户 → 开启「POP3/SMTP 服务」
-     - 获取授权码（不是登录密码）
-   - 修改 `app/config.py` 中的邮件配置：
-     ```python
-     MAIL_USERNAME = '你的QQ邮箱@qq.com'
-     MAIL_PASSWORD = '你的QQ邮箱SMTP授权码'
-     ```
+创建数据库：
 
-### 步骤 4：初始化数据库与创建管理员账户
-1. **创建数据库表**
-   - 项目根目录下，执行命令进入 Flask shell：
-     ```bash
-     flask shell
-     ```
-   - 执行命令创建所有数据表：
-     ```python
-     db.create_all()
-     ```
-   - 无报错即创建成功，退出 Flask shell：`exit()`
+```sql
+CREATE DATABASE online_shopping CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-2. **创建管理员账户**
-   - 设置 Flask 应用入口环境变量，在当前 PowerShell 窗口中执行：
-     ```powershell
-     $env:FLASK_APP = "run.py"
-     ```
-   - 执行命令：`flask create-admin`
-   - 按照提示输入管理员用户名、邮箱、密码，完成后即创建成功（该账户 `is_admin=True`，可登录管理后台）
+修改 `app/config.py` 中的数据库连接串：
 
-3. **（可选）添加测试商品**
-   - 再次进入 Flask shell：`flask shell`
-   - 执行以下代码添加测试商品：
-     ```python
-     from app.models.product import Product
-     p1 = Product(name="测试商品1", description="这是第一个测试商品", price=99.99, stock=100)
-     p2 = Product(name="测试商品2", description="这是第二个测试商品", price=199.99, stock=50)
-     db.session.add(p1)
-     db.session.add(p2)
-     db.session.commit()
-     ```
-   - 退出 Flask shell：`exit()`
+```python
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://用户名:密码@localhost:3306/online_shopping?charset=utf8mb4'
+```
 
-### 步骤 5：本地运行与功能测试
-1. **运行项目**
-   - 项目根目录下执行命令：`python run.py`
-   - 看到提示 `Running on http://0.0.0.0:5000` 即运行成功
+### 5. 初始化数据库与账号
 
-2. **访问项目并测试功能**
-   - 打开浏览器，访问 `http://localhost:5000`
-   
-   **顾客端功能测试：**
-   - 点击「注册」，填写信息创建普通顾客账户
-   - 登录该账户，浏览商品列表
-   - 点击「加入购物车」，将商品添加到购物车
-   - 进入「我的购物车」，更新商品数量、删除商品
-   - 点击「去结算」，填写收货信息，提交订单
-   - 查看「我的订单」，确认订单信息和状态
-   - 检查注册邮箱，是否收到发货确认邮件
-   
-   **管理员端功能测试：**
-   - 用之前创建的管理员账户登录
-   - 点击「管理后台」，进入仪表盘查看统计数据
-   - 进入「商品管理」，添加、编辑、删除商品
-   - 进入「订单管理」，更新订单状态（如待付款→已发货）
-   - 进入「销售统计」，查看不同时间范围的销售报表
+```bash
+set FLASK_APP=run.py          # Windows
+export FLASK_APP=run.py       # Linux/Mac
 
-3. **停止项目运行**
-   - 命令行中按下 `Ctrl+C`，即可停止项目运行
-   - 退出虚拟环境：`deactivate`
+flask shell
+>>> from app import db
+>>> db.create_all()
+>>> exit()
+```
 
-## 在线部署
-打开浏览器直接访问：[http://139.9.215.106/]
+创建管理员和销售人员：
+
+```bash
+flask create-admin     # 交互式创建管理员
+flask create-sales     # 交互式创建销售人员
+```
+
+### 6. 运行
+
+```bash
+python run.py
+# 访问 http://localhost:5000
+```
+
+## 生产部署
+
+使用 Gunicorn + Nginx：
+
+```bash
+gunicorn -w 2 -b 127.0.0.1:8000 run:app
+```
+
+Nginx 配置示例：
+
+```nginx
+server {
+    listen 80;
+    server_name _;
+    client_max_body_size 20M;
+
+    location /static/ {
+        alias /opt/online-shop/static/;
+        expires 30d;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+## 项目结构
+
+```
+online-shop/
+├── run.py                  # 应用入口
+├── requirements.txt        # Python 依赖
+├── app/
+│   ├── __init__.py         # 应用工厂
+│   ├── config.py           # 配置
+│   ├── models/             # 数据模型
+│   │   ├── user.py         # 用户模型
+│   │   ├── product.py      # 商品/分类模型
+│   │   ├── cart.py         # 购物车模型
+│   │   ├── order.py        # 订单模型
+│   │   └── tracking.py     # 日志/画像模型
+│   ├── routes/             # 路由蓝图
+│   │   ├── auth.py         # 认证（登录/注册）
+│   │   ├── customer.py     # 顾客端
+│   │   ├── admin.py        # 管理员端
+│   │   └── analytics.py    # 数据分析 API
+│   ├── utils/              # 工具模块
+│   │   ├── anti_crawler.py # 反爬虫
+│   │   ├── recommendation.py # 推荐系统
+│   │   └── tracking.py     # 行为追踪
+│   ├── templates/          # Jinja2 模板
+│   └── static/             # 静态资源
+└── test_screenshots/       # 测试截图
+```

@@ -1,0 +1,53 @@
+﻿{% extends "base.html" %}
+{% block title %}个性化推荐{% endblock %}
+{% block content %}
+<h3 class="mb-4">猜你喜欢</h3>
+
+{% if profile %}
+<div class="card mb-4">
+  <div class="card-body">
+    <h5>我的消费画像</h5>
+    <div class="row g-2 small">
+      <div class="col-6 col-md-3"><span class="text-muted">累计消费：</span>&yen;{{ "%.2f"|format(profile.total_spent) }}</div>
+      <div class="col-6 col-md-3"><span class="text-muted">订单数：</span>{{ profile.total_orders }}</div>
+      <div class="col-6 col-md-3"><span class="text-muted">偏好分类：</span>{{ profile.favorite_category_name or "暂无" }}</div>
+      <div class="col-6 col-md-3"><span class="text-muted">购买力：</span>{{ {'high':'高','medium':'中','low':'低'}.get(profile.purchasing_power, profile.purchasing_power) }}</div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if collab_recs %}
+<h5 class="mb-3">和您相似的用户也买了</h5>
+<div class="row g-3 mb-4">
+  {% for p in collab_recs %}
+  <div class="col-6 col-md-3">
+    <div class="card product-card h-100" onclick="location.href='{{ url_for('customer.product_detail', product_id=p.id) }}'" style="cursor:pointer">
+      {% if p.image_filename %}<img src="{{ url_for('static', filename='images/' + p.image_filename) }}" class="card-img-top" alt="{{ p.name }}">
+      {% else %}<img src="https://via.placeholder.com/250x180?text=暂无图片" class="card-img-top" alt="{{ p.name }}">{% endif %}
+      <div class="card-body p-2"><small class="text-truncate d-block fw-bold">{{ p.name }}</small><small class="text-danger">&yen;{{ "%.2f"|format(p.price) }}</small></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if browse_recs %}
+<h5 class="mb-3">根据您的浏览记录推荐</h5>
+<div class="row g-3">
+  {% for p in browse_recs %}
+  <div class="col-6 col-md-3">
+    <div class="card product-card h-100" onclick="location.href='{{ url_for('customer.product_detail', product_id=p.id) }}'" style="cursor:pointer">
+      {% if p.image_filename %}<img src="{{ url_for('static', filename='images/' + p.image_filename) }}" class="card-img-top" alt="{{ p.name }}">
+      {% else %}<img src="https://via.placeholder.com/250x180?text=暂无图片" class="card-img-top" alt="{{ p.name }}">{% endif %}
+      <div class="card-body p-2"><small class="text-truncate d-block fw-bold">{{ p.name }}</small><small class="text-danger">&yen;{{ "%.2f"|format(p.price) }}</small></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if not collab_recs and not browse_recs %}
+<div class="alert alert-info">多逛逛商品页面，系统会为您生成个性化推荐！</div>
+{% endif %}
+{% endblock %}

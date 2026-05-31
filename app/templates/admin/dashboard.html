@@ -1,76 +1,77 @@
-{% extends "base.html" %}
-
-{% block title %}管理员仪表盘 - 在线购物网站{% endblock %}
-
+﻿{% extends "base.html" %}
+{% block title %}管理后台{% endblock %}
 {% block content %}
-<h2 class="mb-4">管理员仪表盘</h2>
+<h2 class="mb-4">管理后台</h2>
 
-<!-- 统计卡片 -->
-<div class="row gap-4 mb-5">
-    <div class="col-md-4">
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
         <div class="card bg-primary text-white h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">商品总数</h5>
-                <h2 class="display-4">{{ product_count }}</h2>
-            </div>
-            <div class="card-footer bg-primary bg-opacity-80 d-flex align-items-center justify-content-between">
-                <a href="{{ url_for('admin.product_list') }}" class="text-white text-decoration-none">查看商品管理</a>
-                <i class="bi bi-box-seam"></i>
-            </div>
+            <div class="card-body"><small>商品总数</small><h3>{{ product_count }}</h3></div>
+            <div class="card-footer bg-primary bg-opacity-75"><a href="{{ url_for('admin.product_list') }}" class="text-white text-decoration-none small">管理 &rarr;</a></div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-6 col-md-3">
         <div class="card bg-success text-white h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">订单总数</h5>
-                <h2 class="display-4">{{ order_count }}</h2>
-            </div>
-            <div class="card-footer bg-success bg-opacity-80 d-flex align-items-center justify-content-between">
-                <a href="{{ url_for('admin.order_list') }}" class="text-white text-decoration-none">查看订单管理</a>
-                <i class="bi bi-receipt"></i>
-            </div>
+            <div class="card-body"><small>订单总数</small><h3>{{ order_count }}</h3></div>
+            <div class="card-footer bg-success bg-opacity-75"><a href="{{ url_for('admin.order_list') }}" class="text-white text-decoration-none small">管理 &rarr;</a></div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-6 col-md-3">
         <div class="card bg-danger text-white h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">总销售额</h5>
-                <h2 class="display-4">¥{{ "%.2f"|format(total_sales or 0.0) }}</h2>
-            </div>
-            <div class="card-footer bg-danger bg-opacity-80 d-flex align-items-center justify-content-between">
-                <a href="{{ url_for('admin.sales_report') }}" class="text-white text-decoration-none">查看销售统计</a>
-                <i class="bi bi-currency-yen"></i>
-            </div>
+            <div class="card-body"><small>总销售额</small><h3>&yen;{{ "%.0f"|format(total_sales or 0) }}</h3></div>
+            <div class="card-footer bg-danger bg-opacity-75"><a href="{{ url_for('admin.sales_report') }}" class="text-white text-decoration-none small">报表 &rarr;</a></div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-warning text-white h-100 shadow-sm">
+            <div class="card-body"><small>今日订单</small><h3>{{ today_orders }}</h3><small>&yen;{{ "%.0f"|format(today_sales or 0) }}</small></div>
+            <div class="card-footer bg-warning bg-opacity-75"><a href="{{ url_for('analytics.dashboard_page') }}" class="text-white text-decoration-none small">数据分析 &rarr;</a></div>
         </div>
     </div>
 </div>
 
-<!-- 管理菜单 + 欢迎信息 -->
-<div class="row gap-4">
+<div class="row g-4">
     <div class="col-md-3">
         <div class="admin-sidebar">
             <h5>管理菜单</h5>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <a href="{{ url_for('admin.product_list') }}" class="text-decoration-none">商品管理（增删改查）</a>
-                </li>
-                <li class="list-group-item">
-                    <a href="{{ url_for('admin.order_list') }}" class="text-decoration-none">订单管理（修改状态）</a>
-                </li>
-                <li class="list-group-item">
-                    <a href="{{ url_for('admin.sales_report') }}" class="text-decoration-none">销售统计（报表查询）</a>
-                </li>
+                <li class="list-group-item"><a href="{{ url_for('admin.product_list') }}" class="text-decoration-none">商品管理</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.category_list') }}" class="text-decoration-none">分类管理</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.order_list') }}" class="text-decoration-none">订单管理</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.sales_report') }}" class="text-decoration-none">销售报表</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.browse_logs') }}" class="text-decoration-none">浏览日志</a></li>
+                {% if current_user.is_admin %}
+                <li class="list-group-item"><a href="{{ url_for('admin.user_list') }}" class="text-decoration-none">用户管理</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.operation_logs') }}" class="text-decoration-none">操作日志</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.login_logs') }}" class="text-decoration-none">登录日志</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.anti_crawler_page') }}" class="text-decoration-none">反爬虫管理</a></li>
+                {% endif %}
+                <li class="list-group-item"><a href="{{ url_for('admin.import_products') }}" class="text-decoration-none">导入商品</a></li>
+                <li class="list-group-item"><a href="{{ url_for('analytics.dashboard_page') }}" class="text-decoration-none">数据可视化</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.export_orders') }}" class="text-decoration-none">导出订单</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.export_products') }}" class="text-decoration-none">导出商品</a></li>
+                <li class="list-group-item"><a href="{{ url_for('admin.export_users') }}" class="text-decoration-none">导出用户</a></li>
             </ul>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-9">
         <div class="admin-content shadow-sm border rounded-3 bg-white p-4">
-            <h5 class="mb-3">欢迎使用管理员后台</h5>
-            <p class="text-muted">您好，管理员 {{ current_user.username }}，您可以通过左侧管理菜单完成以下操作：</p>
-            <ul class="list-group list-group-flush mt-3">
-                <li class="list-group-item">添加、编辑、删除商品，维护商品库存与价格</li>
-                <li class="list-group-item">查看所有用户订单，更新订单状态（待付款/已发货/已完成/已取消）</li>
-                <li class="list-group-item">查看不同时间范围的销售统计报表，了解热销商品</li>
+            <h5 class="mb-3">欢迎，{{ current_user.username }}</h5>
+            <p class="text-muted">角色：<span class="badge bg-{{ 'danger' if current_user.is_admin else 'warning' }}">{{ {'admin':'管理员','sales':'销售人员'}.get(current_user.role, current_user.role) }}</span></p>
+            <ul class="list-group list-group-flush mt-2 small">
+                <li class="list-group-item">添加、编辑、删除商品和分类</li>
+                <li class="list-group-item">查看订单并更新状态（待付款/已发货/已完成/已取消）</li>
+                <li class="list-group-item">查看销售报表和数据分析仪表板</li>
+                <li class="list-group-item">查看浏览日志</li>
+                {% if current_user.is_admin %}
+                <li class="list-group-item">管理用户：分配销售角色、重置密码</li>
+                <li class="list-group-item">查看操作日志和登录日志</li>
+                <li class="list-group-item">管理反爬虫黑名单</li>
+                {% endif %}
+                <li class="list-group-item">导入/导出数据（CSV格式）</li>
+                {% if low_stock_count > 0 %}
+                <li class="list-group-item text-danger">警告：{{ low_stock_count }} 件商品库存不足！</li>
+                {% endif %}
             </ul>
         </div>
     </div>

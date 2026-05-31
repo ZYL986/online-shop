@@ -1,0 +1,20 @@
+﻿{% extends "base.html" %}
+{% block title %}分类管理{% endblock %}
+{% block content %}
+<h3>分类管理</h3>
+<a href="{{ url_for('admin.category_add') }}" class="btn btn-primary btn-sm mb-3">添加分类</a>
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>名称</th><th>描述</th><th>操作</th></tr></thead>
+  <tbody>
+    {% for c in categories %}
+    <tr><td>{{ c.id }}</td><td>{{ c.name }}</td><td>{{ c.description or "" }}</td>
+      <td>
+        <a href="{{ url_for('admin.category_edit', cat_id=c.id) }}" class="btn btn-sm btn-outline-primary">编辑</a>
+        <a href="{{ url_for('admin.category_delete', cat_id=c.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('删除该分类？相关商品将变为未分类。')">删除</a>
+      </td></tr>
+    {% else %}
+    <tr><td colspan="4" class="text-center text-muted">暂无分类</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

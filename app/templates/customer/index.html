@@ -1,35 +1,42 @@
-{% extends "base.html" %}
-
-{% block title %}首页 - 商品列表 - 在线购物网站{% endblock %}
-
+﻿{% extends "base.html" %}
+{% block title %}首页 - 在线购物商城{% endblock %}
 {% block content %}
-<h2 class="mb-4">商品列表</h2>
+<div class="row mb-4">
+  <div class="col-md-8">
+    <form method="GET" action="{{ url_for('customer.index') }}" class="d-flex">
+      <input type="text" name="search" class="form-control me-2" placeholder="搜索商品..." value="{{ search or '' }}">
+      <button type="submit" class="btn btn-outline-primary">搜索</button>
+    </form>
+  </div>
+  <div class="col-md-4">
+    <select class="form-select" onchange="location.href='{{ url_for('customer.index') }}?category='+this.value{% if search %}+'&search={{ search }}'{% endif %}">
+      <option value="">全部分类</option>
+      {% for c in categories %}
+      <option value="{{ c.id }}" {% if current_category == c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
 <div class="row">
-    <!-- 商品循环：Jinja2 for循环正确，变量关联product -->
     {% for product in products %}
     <div class="col-md-4 col-sm-6">
         <div class="card product-card">
-            <!-- 商品图片：Jinja2条件判断+url_for正确关联静态文件 -->
+            <a href="{{ url_for('customer.product_detail', product_id=product.id) }}">
             {% if product.image_filename %}
             <img src="{{ url_for('static', filename='images/' + product.image_filename) }}" class="card-img-top" alt="{{ product.name }}">
             {% else %}
-            <img src="https://via.placeholder.com/300x200?text=商品图片+暂无" class="card-img-top" alt="{{ product.name }}">
+            <img src="https://via.placeholder.com/300x200?text=暂无图片" class="card-img-top" alt="{{ product.name }}">
             {% endif %}
+            </a>
             <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <!-- 价格格式化：Jinja2 format过滤器，保留2位小数 -->
-                <p class="card-text text-danger fw-bold">¥{{ "%.2f"|format(product.price) }}</p>
-                <p class="card-text text-truncate">{{ product.description or "暂无商品描述" }}</p>
-                <p class="card-text text-muted">库存：{{ product.stock }} 件</p>
-                <!-- 已登录普通顾客：显示加入购物车按钮 -->
-                {% if current_user.is_authenticated and not current_user.is_admin %}
+                <h5 class="card-title"><a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">{{ product.name }}</a></h5>
+                <p class="card-text text-danger fw-bold">&yen;{{ "%.2f"|format(product.price) }}</p>
+                <p class="card-text text-muted small">库存: {{ product.stock }} | 浏览: {{ product.view_count or 0 }}</p>
+                {% if current_user.is_authenticated and current_user.role == 'customer' %}
                 <form method="POST" action="{{ url_for('customer.cart_add', product_id=product.id) }}">
-                    <button type="submit" class="btn btn-primary w-100" {% if product.stock <= 0 %}disabled{% endif %}>
-                        {% if product.stock <= 0 %}
-                        <span class="text-white-50">库存不足，无法添加</span>
-                        {% else %}
-                        加入购物车
-                        {% endif %}
+                    <button type="submit" class="btn btn-primary btn-sm w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+                        {% if product.stock <= 0 %}库存不足{% else %}加入购物车{% endif %}
                     </button>
                 </form>
                 {% endif %}
@@ -37,10 +44,7 @@
         </div>
     </div>
     {% else %}
-    <!-- 无商品时提示：Jinja2 else分支正确 -->
-    <div class="col-12">
-        <div class="alert alert-info text-center">暂无商品可供展示，敬请期待！</div>
-    </div>
+    <div class="col-12"><div class="alert alert-info text-center">暂未找到商品</div></div>
     {% endfor %}
 </div>
 {% endblock %}

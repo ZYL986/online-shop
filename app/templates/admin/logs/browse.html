@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block title %}浏览日志{% endblock %}
+{% block content %}
+<h3>浏览日志</h3>
+<table class="table table-striped table-sm">
+  <thead><tr><th>时间</th><th>用户</th><th>商品</th><th>行为</th><th>IP</th></tr></thead>
+  <tbody>
+    {% for l in logs %}
+    <tr>
+      <td>{{ l.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+      <td>{{ l.user.username if l.user else "游客" }}</td>
+      <td>{{ l.product.name if l.product else "N/A" }}</td>
+      <td><span class="badge bg-info">{{ {'view':'浏览','add_to_cart':'加入购物车'}.get(l.action, l.action) }}</span></td>
+      <td>{{ l.ip_address or "" }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="text-center text-muted">暂无记录</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if pagination and pagination.pages > 1 %}
+<nav><ul class="pagination">
+  {% for p in pagination.iter_pages() %}
+  <li class="page-item {{ 'active' if p == pagination.page }}"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+  {% endfor %}
+</ul></nav>
+{% endif %}
+{% endblock %}
